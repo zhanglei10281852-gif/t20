@@ -1,27 +1,25 @@
 import { useMemo } from "react";
 import { Line } from "@react-three/drei";
-import * as THREE from "three";
+import { getOrbitEllipsePoints } from "@/utils/astronomy";
 
 interface OrbitLineProps {
   radius: number;
+  eccentricity?: number;
+  perihelionAngle?: number;
   color?: string;
   opacity?: number;
 }
 
 export function OrbitLine({
   radius,
+  eccentricity = 0,
+  perihelionAngle = 0,
   color = "#4a5568",
   opacity = 0.3,
 }: OrbitLineProps) {
   const points = useMemo(() => {
-    const pts: [number, number, number][] = [];
-    const segments = 128;
-    for (let i = 0; i <= segments; i++) {
-      const angle = (i / segments) * Math.PI * 2;
-      pts.push([Math.cos(angle) * radius, 0, Math.sin(angle) * radius]);
-    }
-    return pts;
-  }, [radius]);
+    return getOrbitEllipsePoints(radius, eccentricity, perihelionAngle, 128);
+  }, [radius, eccentricity, perihelionAngle]);
 
   return (
     <Line

@@ -78,7 +78,7 @@ export function QuizModal() {
     quizAnswered.length === totalQuestions && quizAnswered.every((a) => a);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div
         className="relative w-full max-w-lg mx-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/50 shadow-2xl overflow-hidden"
         style={{ animation: "fadeIn 0.3s ease-out" }}

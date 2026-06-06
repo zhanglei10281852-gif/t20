@@ -30,11 +30,14 @@ export interface PlanetData {
 
   visualSize: number;
   orbitRadius: number;
+  orbitEccentricity: number;
+  perihelionAngle: number;
   orbitSpeed: number;
   rotationSpeed: number;
 
   realSize: number;
   realOrbitRadius: number;
+  realOrbitEccentricity: number;
 
   initialAngle: number;
   axialTilt: number;

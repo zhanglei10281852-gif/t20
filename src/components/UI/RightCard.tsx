@@ -20,7 +20,7 @@ export function RightCard() {
   if (!showRightCard || !planet) return null;
 
   return (
-    <div className="absolute right-4 top-24 z-10 w-72 max-h-[calc(100vh-7rem)] overflow-y-auto">
+    <div className="absolute right-4 bottom-28 z-20 w-80 max-h-[calc(100vh-10rem)] overflow-y-auto">
       <div
         className="rounded-2xl border border-slate-600/50 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/50 overflow-hidden"
         style={{

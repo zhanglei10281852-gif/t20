@@ -25,11 +25,59 @@ export function getPlanetAngle(
 export function getPlanetPosition(
   orbitRadius: number,
   angle: number,
+  eccentricity: number = 0,
+  perihelionAngle: number = 0,
 ): { x: number; z: number } {
+  if (eccentricity === 0) {
+    return {
+      x: Math.cos(angle) * orbitRadius,
+      z: Math.sin(angle) * orbitRadius,
+    };
+  }
+
+  const a = orbitRadius;
+  const e = eccentricity;
+  const b = a * Math.sqrt(1 - e * e);
+
+  let x = a * (Math.cos(angle) - e);
+  let z = b * Math.sin(angle);
+
+  const cosP = Math.cos(perihelionAngle);
+  const sinP = Math.sin(perihelionAngle);
+  const rotatedX = x * cosP - z * sinP;
+  const rotatedZ = x * sinP + z * cosP;
+
   return {
-    x: Math.cos(angle) * orbitRadius,
-    z: Math.sin(angle) * orbitRadius,
+    x: rotatedX,
+    z: rotatedZ,
   };
+}
+
+export function getOrbitEllipsePoints(
+  orbitRadius: number,
+  eccentricity: number,
+  perihelionAngle: number = 0,
+  segments: number = 128,
+): [number, number, number][] {
+  const points: [number, number, number][] = [];
+  const a = orbitRadius;
+  const e = eccentricity;
+  const b = a * Math.sqrt(1 - e * e);
+
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    let x = a * (Math.cos(angle) - e);
+    let z = b * Math.sin(angle);
+
+    const cosP = Math.cos(perihelionAngle);
+    const sinP = Math.sin(perihelionAngle);
+    const rotatedX = x * cosP - z * sinP;
+    const rotatedZ = x * sinP + z * cosP;
+
+    points.push([rotatedX, 0, rotatedZ]);
+  }
+
+  return points;
 }
 
 export function formatNumber(num: number): string {
@@ -37,6 +85,19 @@ export function formatNumber(num: number): string {
   if (num >= 1e6) return (num / 1e6).toFixed(2) + " × 10⁶";
   if (num >= 1e3) return num.toLocaleString("zh-CN");
   return num.toString();
+}
+
+export function trueAnomalyToEccentric(
+  trueAnomaly: number,
+  eccentricity: number,
+): number {
+  return (
+    2 *
+    Math.atan(
+      Math.sqrt((1 - eccentricity) / (1 + eccentricity)) *
+        Math.tan(trueAnomaly / 2),
+    )
+  );
 }
 
 export function formatKM(km: number): string {

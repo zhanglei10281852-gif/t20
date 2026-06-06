@@ -7,8 +7,12 @@ import {
   AlignLeft,
   Leaf,
   Sparkles,
+  Play,
+  Pause,
 } from "lucide-react";
 import { useSolarStore } from "@/store/useSolarStore";
+import { PLANETS } from "@/data/planets";
+import { trueAnomalyToEccentric } from "@/utils/astronomy";
 
 export function ViewModeButtons() {
   const {
@@ -16,6 +20,7 @@ export function ViewModeButtons() {
     scaleMode,
     focusedPlanet,
     activeDemo,
+    isPlaying,
     setViewMode,
     setScaleMode,
     goToOverview,
@@ -23,27 +28,76 @@ export function ViewModeButtons() {
     focusPlanet,
     setSimulationTime,
     setSpeedPreset,
+    setDemoPlanetAngleOverride,
+    setDemoMoonAngleOverride,
+    togglePlay,
   } = useSolarStore();
 
   const handleEclipse = () => {
+    if (activeDemo === "eclipse") {
+      triggerDemo(null);
+      setDemoMoonAngleOverride(null);
+      setDemoPlanetAngleOverride(null);
+      return;
+    }
     triggerDemo("eclipse");
     focusPlanet("earth");
     setSimulationTime(0);
     setSpeedPreset("day");
+
+    const earth = PLANETS.find((p) => p.id === "earth");
+    if (earth) {
+      const targetDir = 0;
+      const trueAnomaly = targetDir - earth.perihelionAngle;
+      const eccentricAnomaly = trueAnomalyToEccentric(
+        trueAnomaly,
+        earth.orbitEccentricity,
+      );
+      const angleOverride: Record<string, number> = { earth: eccentricAnomaly };
+      setDemoPlanetAngleOverride(angleOverride);
+    }
+
+    setDemoMoonAngleOverride(Math.PI);
+
+    if (isPlaying) togglePlay();
   };
 
   const handleAlignment = () => {
+    if (activeDemo === "alignment") {
+      triggerDemo(null);
+      setDemoPlanetAngleOverride(null);
+      setDemoMoonAngleOverride(null);
+      return;
+    }
     triggerDemo("alignment");
     focusPlanet(null);
-    setSimulationTime(5000);
-    setSpeedPreset("year");
+
+    const targetDir = 0;
+    const angleOverride: Record<string, number> = {};
+    PLANETS.forEach((planet) => {
+      const eccentricity = planet.orbitEccentricity;
+      const trueAnomaly = targetDir - planet.perihelionAngle;
+      const eccentricAnomaly = trueAnomalyToEccentric(
+        trueAnomaly,
+        eccentricity,
+      );
+      angleOverride[planet.id] = eccentricAnomaly;
+    });
+    setDemoPlanetAngleOverride(angleOverride);
+    setDemoMoonAngleOverride(0);
+    if (isPlaying) togglePlay();
   };
 
   const handleSeasons = () => {
+    if (activeDemo === "seasons") {
+      triggerDemo(null);
+      return;
+    }
     triggerDemo("seasons");
     focusPlanet("earth");
     setSimulationTime(0);
     setSpeedPreset("month");
+    if (!isPlaying) togglePlay();
   };
 
   return (

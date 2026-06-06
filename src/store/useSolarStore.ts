@@ -24,6 +24,8 @@ interface SolarState {
 
   activeDemo: DemoType;
   isCameraAnimating: boolean;
+  demoPlanetAngleOverride: Record<string, number> | null;
+  demoMoonAngleOverride: number | null;
 
   setTimeSpeed: (speed: number) => void;
   togglePlay: () => void;
@@ -47,6 +49,8 @@ interface SolarState {
 
   triggerDemo: (demo: DemoType) => void;
   setCameraAnimating: (animating: boolean) => void;
+  setDemoPlanetAngleOverride: (override: Record<string, number> | null) => void;
+  setDemoMoonAngleOverride: (angle: number | null) => void;
 
   goToOverview: () => void;
 }
@@ -73,6 +77,8 @@ export const useSolarStore = create<SolarState>((set) => ({
 
   activeDemo: null,
   isCameraAnimating: false,
+  demoPlanetAngleOverride: null,
+  demoMoonAngleOverride: null,
 
   setTimeSpeed: (speed) => set({ timeSpeed: speed }),
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
@@ -124,6 +130,9 @@ export const useSolarStore = create<SolarState>((set) => ({
 
   triggerDemo: (demo) => set({ activeDemo: demo }),
   setCameraAnimating: (animating) => set({ isCameraAnimating: animating }),
+  setDemoPlanetAngleOverride: (override) =>
+    set({ demoPlanetAngleOverride: override }),
+  setDemoMoonAngleOverride: (angle) => set({ demoMoonAngleOverride: angle }),
 
   goToOverview: () =>
     set({
@@ -131,5 +140,7 @@ export const useSolarStore = create<SolarState>((set) => ({
       showRightCard: false,
       viewMode: "orbit",
       activeDemo: null,
+      demoPlanetAngleOverride: null,
+      demoMoonAngleOverride: null,
     }),
 }));
